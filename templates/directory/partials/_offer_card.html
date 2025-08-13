@@ -1,0 +1,21 @@
+<div data-card class="bg-white rounded-2xl shadow-md p-5 ring-1 ring-gray-100 hover:shadow-lg transition hover:-translate-y-0.5">
+  <div class="flex items-start justify-between">
+    <div>
+      <a href="{{ offer.get_absolute_url }}" class="font-semibold text-lg hover:underline">{{ offer.title }}</a>
+      <div class="text-sm text-gray-600 mt-0.5">{{ offer.skill.name }} • {{ offer.user.username }}</div>
+    </div>
+    <span class="text-sm px-2 py-1 rounded-full {% if offer.is_active %}bg-emerald-100 text-emerald-700{% else %}bg-gray-100 text-gray-600{% endif %}">{{ offer.is_active|yesno:'Active,Inactive' }}</span>
+  </div>
+  <p class="mt-3 text-gray-700 line-clamp-3">{{ offer.description|truncatechars:160 }}</p>
+  <div class="mt-4 flex items-center justify-between text-sm text-gray-700">
+    <span>{{ offer.availability }}</span>
+    <span>{{ offer.hour_value }} h/credit</span>
+  </div>
+  {% if request.user == offer.user %}
+  <div class="mt-4 flex gap-2">
+    <a href="/offers/{{ offer.id }}/edit/" class="px-3 py-1.5 rounded-lg border hover:bg-gray-50 transition">Edit</a>
+    <button hx-post="/offers/{{ offer.id }}/toggle/" hx-target="closest [data-card]" hx-swap="outerHTML" class="px-3 py-1.5 rounded-lg border hover:bg-gray-50 transition">Toggle</button>
+  </div>
+  {% endif %}
+</div>
+

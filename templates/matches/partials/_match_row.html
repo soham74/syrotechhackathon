@@ -1,0 +1,27 @@
+<tr id="match-{{ m.id }}">
+  <td class="p-3">{{ m.scheduled_at|default:'—' }}</td>
+  <td class="p-3">{{ m.requester.username }} ⇄ {{ m.provider.username }}</td>
+  <td class="p-3">{{ m.agreed_hours }} h</td>
+  <td class="p-3">
+    <span class="px-2 py-1 text-sm rounded-full
+      {% if m.status == 'accepted' %}bg-blue-100 text-blue-700
+      {% elif m.status == 'done' %}bg-green-100 text-green-700
+      {% elif m.status == 'cancelled' %}bg-gray-100 text-gray-700
+      {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+      {{ m.get_status_display }}
+    </span>
+  </td>
+  <td class="p-3">
+    <div class="flex gap-2">
+      {% if m.status == 'pending' %}
+        <button hx-post="/matches/{{ m.id }}/accept" hx-target="#match-{{ m.id }}" class="px-3 py-1 border rounded">Accept</button>
+        <button hx-post="/matches/{{ m.id }}/cancel" hx-target="#match-{{ m.id }}" class="px-3 py-1 border rounded">Cancel</button>
+      {% elif m.status == 'accepted' %}
+        <button hx-post="/matches/{{ m.id }}/mark-done" hx-target="#match-{{ m.id }}" class="px-3 py-1 border rounded">Mark Done</button>
+      {% else %}
+        <span class="text-gray-500 text-sm">No actions</span>
+      {% endif %}
+    </div>
+  </td>
+</tr>
+

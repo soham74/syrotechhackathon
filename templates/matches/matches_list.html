@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Matches{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-3xl font-semibold">Your Matches</h1>
+  <a href="/matches/propose" class="px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:shadow-md hover:-translate-y-0.5 transition">Propose Match</a>
+</div>
+<div class="bg-white rounded-2xl shadow-md overflow-hidden ring-1 ring-gray-100">
+  <table class="min-w-full">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="text-left p-3">When</th>
+        <th class="text-left p-3">Parties</th>
+        <th class="text-left p-3">Hours</th>
+        <th class="text-left p-3">Status</th>
+        <th class="text-left p-3">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="match-rows">
+      {% for m in matches %}
+        {% include 'matches/partials/_match_row.html' %}
+      {% empty %}
+      <tr>
+        <td colspan="5" class="p-6 text-center text-gray-600">No matches yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+

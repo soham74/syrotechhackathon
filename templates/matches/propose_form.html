@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Propose Match{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
+  <h1 class="text-xl font-semibold mb-4">Propose a Match</h1>
+  <form method="post" class="space-y-3">
+    {% csrf_token %}
+    {% if not offer and not req %}
+      <div class="text-sm text-gray-700">Provide an <code>?offer=&lt;id&gt;</code> or <code>?request=&lt;id&gt;</code> in the URL, or pick from directory pages.</div>
+    {% endif %}
+    <div>
+      <label class="block text-sm mb-1">Hours</label>
+      <input class="border rounded-lg p-2 w-full" type="number" step="0.5" min="0.5" name="hours" value="1.0" />
+    </div>
+    <div>
+      <label class="block text-sm mb-1">Proposed Time (optional)</label>
+      <input class="border rounded-lg p-2 w-full" type="datetime-local" name="scheduled_at" />
+    </div>
+    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">Send Proposal</button>
+  </form>
+</div>
+{% endblock %}
+

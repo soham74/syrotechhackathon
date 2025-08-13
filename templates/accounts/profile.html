@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Profile · {{ profile_user.username }}{% endblock %}
+{% block content %}
+<div class="flex items-start gap-6">
+  <div class="w-72 bg-white rounded-xl shadow p-6">
+    <div class="text-xl font-semibold">{{ profile_user.username }}</div>
+    <div class="text-sm text-gray-600">{{ profile_user.location }}</div>
+    <div class="mt-2 text-gray-700">{{ profile_user.bio|default:'No bio yet.' }}</div>
+    <div class="mt-4 text-sm">Reputation: <span class="font-semibold">{{ profile_user.reputation_score }}</span></div>
+    <div class="mt-1 text-sm">Avg Rating: <span class="font-semibold">{{ avg_rating|default:'—'|floatformat:1 }}</span> ({{ reviews_count }} reviews)</div>
+  </div>
+  <div class="flex-1">
+    <h2 class="text-lg font-semibold mb-2">Recent Reviews</h2>
+    <div class="space-y-3">
+      {% for r in reviews %}
+      <div class="bg-white rounded-xl shadow p-4">
+        <div class="text-sm text-gray-600">From {{ r.rater.username }} • {{ r.created_at|date:'Y-m-d' }}</div>
+        <div class="font-medium">Rating: {{ r.rating }}/5</div>
+        <div class="text-gray-700">{{ r.comment|default:'(no comment)' }}</div>
+      </div>
+      {% empty %}
+      <div class="text-gray-600">No reviews yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+

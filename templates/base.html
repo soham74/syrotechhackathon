@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}SkillBank{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind = {
+        config: {
+          theme: {
+            extend: {
+              fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+              colors: {
+                brand: {
+                  primary: '#2563EB',
+                  secondary: '#9333EA',
+                  accent: '#06B6D4'
+                }
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <meta name="theme-color" content="#2563EB" />
+</head>
+<body class="bg-gradient-to-b from-slate-50 to-white text-gray-900">
+    <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="text-xl font-semibold bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">SkillBank</a>
+            <div class="flex items-center gap-3 text-sm">
+                <a class="px-3 py-1.5 rounded-lg hover:bg-gray-100 transition text-slate-700 hover:text-brand-primary" href="/offers/">Offers</a>
+                <a class="px-3 py-1.5 rounded-lg hover:bg-gray-100 transition text-slate-700 hover:text-brand-primary" href="/requests/">Requests</a>
+                <a class="px-3 py-1.5 rounded-lg hover:bg-gray-100 transition text-slate-700 hover:text-brand-primary" href="/matches/">Matches</a>
+                <a class="px-3 py-1.5 rounded-lg hover:bg-gray-100 transition text-slate-700 hover:text-brand-primary" href="/wallet/">Wallet</a>
+                <a class="px-3 py-1.5 rounded-lg hover:bg-gray-100 transition text-slate-700 hover:text-brand-primary" href="/reviews/pending">Reviews</a>
+                <a class="px-3 py-1.5 rounded-xl text-white bg-gradient-to-r from-brand-primary to-brand-secondary hover:opacity-90 transition shadow" href="/accounts/login/">Sign in</a>
+            </div>
+        </div>
+    </nav>
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        {% if messages %}
+        <div class="fixed top-4 right-4 space-y-2 z-50">
+            {% for message in messages %}
+            {% if 'error' in message.tags %}
+            <div class="toast px-4 py-2 rounded-lg shadow text-white bg-red-600 transition opacity-100">{{ message }}</div>
+            {% elif 'success' in message.tags %}
+            <div class="toast px-4 py-2 rounded-lg shadow text-white bg-green-600 transition opacity-100">{{ message }}</div>
+            {% else %}
+            <div class="toast px-4 py-2 rounded-lg shadow text-white bg-blue-600 transition opacity-100">{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <script>
+      (function(){
+        function getCookie(name) {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        if (window.htmx) {
+          document.body.addEventListener('htmx:configRequest', function(evt) {
+            const token = getCookie('csrftoken');
+            if (token) {
+              evt.detail.headers['X-CSRFToken'] = token;
+            }
+          });
+        }
+        // Auto-dismiss toasts
+        setTimeout(() => {
+          document.querySelectorAll('.toast').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transition = 'opacity 300ms ease-out';
+            setTimeout(() => el.remove(), 350);
+          });
+        }, 2500);
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/static/service-worker.js').catch(function(){});
+          });
+        }
+      })();
+    </script>
+</body>
+</html>
+

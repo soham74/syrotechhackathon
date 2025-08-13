@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Requests · SkillBank{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-3xl font-semibold">Requests</h1>
+  <a href="/requests/new/" class="px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:shadow-md hover:-translate-y-0.5 transition">New Request</a>
+  </div>
+<form class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6" hx-get="/requests/" hx-target="#req-results" hx-push-url="true">
+  <select name="skill" class="border rounded-xl p-2">
+    <option value="">All skills</option>
+    {% for s in skills %}
+      <option value="{{ s.id }}" {% if filters.skill|default:'' == s.id|stringformat:'s' %}selected{% endif %}>{{ s.name }}</option>
+    {% endfor %}
+  </select>
+  <input class="border rounded-xl p-2" type="text" name="location" placeholder="Location" value="{{ filters.location }}" />
+  <input class="border rounded-xl p-2" type="text" name="when" placeholder="When" value="{{ filters.when }}" />
+  <button class="px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition">Filter</button>
+  </form>
+<div id="req-results" hx-swap="innerHTML">
+  {% include 'directory/partials/_requests_results.html' %}
+  </div>
+{% endblock %}
+

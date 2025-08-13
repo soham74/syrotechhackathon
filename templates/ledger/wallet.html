@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Wallet{% endblock %}
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-3xl font-semibold">Wallet</h1>
+  <div class="mt-3 p-4 bg-white rounded-2xl shadow ring-1 ring-gray-100 inline-block">
+    <div class="text-gray-600 text-sm">Current Balance</div>
+    <div class="text-4xl font-bold">{{ balance|floatformat:1 }} credits</div>
+  </div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-md overflow-hidden ring-1 ring-gray-100">
+  <table class="min-w-full">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="text-left p-3">Date</th>
+        <th class="text-left p-3">Counterparty</th>
+        <th class="text-left p-3">Hours</th>
+        <th class="text-left p-3">Direction</th>
+        <th class="text-left p-3">Match</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tx in page_obj.object_list %}
+      <tr class="border-t">
+        <td class="p-3">{{ tx.created_at|date:'Y-m-d H:i' }}</td>
+        <td class="p-3">
+          {% if tx.to_user == request.user %}
+            {{ tx.from_user.username }}
+          {% else %}
+            {{ tx.to_user.username }}
+          {% endif %}
+        </td>
+        <td class="p-3">{{ tx.hours|floatformat:1 }}</td>
+        <td class="p-3">
+          {% if tx.to_user == request.user %}
+            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Incoming</span>
+          {% else %}
+            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">Outgoing</span>
+          {% endif %}
+        </td>
+        <td class="p-3">#{{ tx.match.id }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="p-6 text-center text-gray-600">No transactions yet. Earn credits by completing matches.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-4 flex items-center justify-center gap-2">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 border rounded">Prev</a>
+  {% endif %}
+  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 border rounded">Next</a>
+  {% endif %}
+  </div>
+{% endblock %}
+

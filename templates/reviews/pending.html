@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Pending Reviews{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold mb-4">Pending Reviews</h1>
+<div class="bg-white rounded-xl shadow overflow-hidden">
+  <table class="min-w-full">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="text-left p-3">Match</th>
+        <th class="text-left p-3">Ratee</th>
+        <th class="text-left p-3">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in matches %}
+      <tr class="border-t">
+        <td class="p-3">#{{ m.id }} • {{ m.requester.username }} ⇄ {{ m.provider.username }}</td>
+        <td class="p-3">{% if request.user == m.requester %}{{ m.provider.username }}{% else %}{{ m.requester.username }}{% endif %}</td>
+        <td class="p-3"><a class="px-3 py-1 border rounded" href="/reviews/{{ m.id }}/new">Review</a></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3" class="p-6 text-center text-gray-600">No pending reviews.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+

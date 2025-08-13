@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Offer · {{ offer.title }}{% endblock %}
+{% block content %}
+<div class="bg-white rounded-xl shadow p-6">
+  <h1 class="text-2xl font-semibold">{{ offer.title }}</h1>
+  <div class="text-gray-600 mt-1">{{ offer.skill.name }} • by {{ offer.user.username }}</div>
+  <p class="mt-4">{{ offer.description|linebreaks }}</p>
+  <div class="mt-4 text-sm text-gray-700">Availability: {{ offer.availability }}</div>
+  <div class="mt-1 text-sm text-gray-700">Rate: {{ offer.hour_value }} h/credit</div>
+  <div class="mt-6">
+    <a href="/matches/propose?offer={{ offer.id }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Propose Match</a>
+  </div>
+  {% if request.user == offer.user %}
+  <div class="mt-4">
+    <a href="/offers/{{ offer.id }}/edit/" class="px-4 py-2 border rounded">Edit</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
