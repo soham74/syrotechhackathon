@@ -2,7 +2,7 @@
 
 > **Building a more connected, equitable world through skill sharing**
 
-## 🌟 **Social Impact & Problem Statement**
+## **Social Impact & Problem Statement**
 
 ### The Challenge
 In today's digital economy, access to education and skill development is often limited by financial barriers. Traditional learning platforms require significant monetary investment, creating inequality in skill acquisition. Additionally, many people have valuable skills to share but lack platforms to exchange them meaningfully.
@@ -11,13 +11,13 @@ In today's digital economy, access to education and skill development is often l
 **SkillBank** is a revolutionary time-based skill exchange platform that eliminates financial barriers to learning. Instead of money, users trade skills using time credits (1 hour = 1 credit). This creates an equitable ecosystem where anyone can learn new skills regardless of their financial situation.
 
 ### Social Impact
-- **🎓 Democratizing Education**: Makes skill development accessible to everyone
-- **🤝 Community Building**: Fosters meaningful connections through skill sharing
-- **💰 Economic Empowerment**: Enables skill development without financial barriers
-- **🌍 Sustainable Learning**: Promotes continuous learning and knowledge sharing
-- **📈 Social Mobility**: Helps people advance their careers through skill acquisition
+- **Democratizing Education**: Makes skill development accessible to everyone
+- **Community Building**: Fosters meaningful connections through skill sharing
+- **Economic Empowerment**: Enables skill development without financial barriers
+- **Sustainable Learning**: Promotes continuous learning and knowledge sharing
+- **Social Mobility**: Helps people advance their careers through skill acquisition
 
-## 🚀 **Features**
+## **Features**
 
 ### Core Functionality
 - **Skill Exchange System**: Offer and request skills using time credits
@@ -38,7 +38,7 @@ In today's digital economy, access to education and skill development is often l
 - **Security**: CSRF protection, secure authentication
 - **Scalability**: Designed for growth and expansion
 
-## 🛠 **Technology Stack**
+## **Technology Stack**
 
 - **Backend**: Django 5.x (Python)
 - **Frontend**: HTMX, Tailwind CSS, Django Templates
@@ -47,7 +47,7 @@ In today's digital economy, access to education and skill development is often l
 - **Authentication**: Django's built-in auth system
 - **Static Files**: WhiteNoise with service worker
 
-## 📋 **Setup Instructions**
+## **Setup Instructions**
 
 ### Prerequisites
 - Python 3.8+
@@ -129,7 +129,7 @@ In today's digital economy, access to education and skill development is often l
    - Run migrations: `python manage.py migrate`
    - Seed data: `python manage.py shell -c "from scripts.seed_data import run; run()"`
 
-## 🎯 **How It Works**
+## **How It Works**
 
 ### For Skill Providers
 1. **Create an Offer**: List your skills with hourly rates in time credits
@@ -151,7 +151,7 @@ In today's digital economy, access to education and skill development is often l
 - **Fair Exchange**: Everyone's time has equal value
 - **Sustainable**: Encourages continuous learning and teaching
 
-## 🔍 **Key Features Explained**
+## **Key Features Explained**
 
 ### Smart Matching System
 - **Skill-based Matching**: Connect users with relevant skills
@@ -171,7 +171,7 @@ In today's digital economy, access to education and skill development is often l
 - **Review System**: Rate and review learning experiences
 - **Search & Filter**: Find specific skills or providers
 
-## 🌐 **Live Demo**
+## **Live Demo**
 
 **Visit the live application**: [https://syrotechhackathon.vercel.app/](https://syrotechhackathon.vercel.app/)
 
@@ -179,7 +179,7 @@ In today's digital economy, access to education and skill development is often l
 - Email: `alex_smith@example.com`
 - Password: `demodemo`
 
-## 📊 **Impact Metrics**
+## **Impact Metrics**
 
 ### Potential Social Impact
 - **Accessibility**: Eliminates financial barriers to skill development
@@ -195,7 +195,7 @@ In today's digital economy, access to education and skill development is often l
 - **Immigrants**: Learn local skills and build community connections
 - **Entrepreneurs**: Access diverse skills for business development
 
-## 🔧 **Technical Architecture**
+## **Technical Architecture**
 
 ### Backend Structure
 ```
@@ -221,7 +221,7 @@ skillbank/
 - **Financial Tracking**: Credits, transactions, balances
 - **Review System**: Ratings, feedback, reputation building
 
-## 🚀 **Future Roadmap**
+## **Future Roadmap**
 
 ### Phase 2 Features
 - **Video Integration**: Real-time video learning sessions
@@ -237,7 +237,7 @@ skillbank/
 - **Advanced Analytics**: Learning progress tracking
 - **API Development**: Third-party integrations
 
-## 🤝 **Contributing**
+## **Contributing**
 
 We welcome contributions to make SkillBank even better! Here's how you can help:
 
@@ -253,11 +253,11 @@ We welcome contributions to make SkillBank even better! Here's how you can help:
 - Update documentation for any changes
 - Ensure accessibility standards are met
 
-## 📄 **License**
+## **License**
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 **Acknowledgments**
+## **Acknowledgments**
 
 - **Django Community**: For the amazing web framework
 - **Tailwind CSS**: For the beautiful design system
@@ -265,7 +265,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Vercel**: For reliable deployment platform
 - **Syrotech Hackathon**: For the opportunity to build impactful solutions
 
-## 📞 **Contact**
+## **Contact**
 
 - **Project Link**: [https://github.com/soham74/syrotechhackathon](https://github.com/soham74/syrotechhackathon)
 - **Live Demo**: [https://syrotechhackathon.vercel.app/](https://syrotechhackathon.vercel.app/)
