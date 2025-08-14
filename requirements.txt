@@ -9,5 +9,3 @@ whitenoise>=6,<7
 dj-database-url>=2,<3
 
 python-dotenv>=1,<2
-
-vercel-wsgi>=0.8.2,<1
