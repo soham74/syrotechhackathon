@@ -30,7 +30,7 @@ DEBUG = os.getenv('DEBUG', '0') == '1'
 
 load_dotenv()
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '.vercel.app,localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '.vercel.app,localhost,127.0.0.1').split(',') if os.getenv('ALLOWED_HOSTS') else ['.vercel.app', 'localhost', '127.0.0.1']
 
 
 # Application definition
