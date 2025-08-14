@@ -10,6 +10,13 @@ from reviews.models import Review
 
 FIRST_NAMES = ["Alex", "Sam", "Jordan", "Taylor", "Casey", "Riley", "Jamie", "Morgan", "Drew", "Avery",
                "Quinn", "Harper", "Rowan", "Cameron", "Emerson", "Kai", "Hayden", "Jules", "Parker", "Skyler"]
+
+LAST_NAMES = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
+              "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin"]
+
+USERNAMES = ["alex_dev", "sam_codes", "jordan_creative", "taylor_teach", "casey_help", "riley_skills", "jamie_tech", "morgan_art", "drew_build", "avery_learn",
+             "quinn_design", "harper_write", "rowan_teach", "cameron_help", "emerson_skill", "kai_creative", "hayden_tech", "jules_art", "parker_build", "skyler_learn"]
+
 LOCATIONS = ["NYC", "SF", "Austin", "Seattle", "Chicago", "Remote", "London", "Berlin"]
 SKILL_NAMES = [
     "Web Design", "Python", "Gardening", "Guitar", "Cooking", "Math Tutoring", "House Painting", "Yoga",
@@ -23,12 +30,16 @@ def create_users(num=20):
     User = get_user_model()
     users = []
     for i in range(num):
-        username = f"user{i+1}"
+        first_name = random.choice(FIRST_NAMES)
+        last_name = random.choice(LAST_NAMES)
+        username = USERNAMES[i] if i < len(USERNAMES) else f"{first_name.lower()}_{random.choice(['dev', 'help', 'skill', 'teach', 'art', 'tech'])}"
         email = f"{username}@example.com"
         user, _ = User.objects.get_or_create(username=username, defaults={
             'email': email,
+            'first_name': first_name,
+            'last_name': last_name,
             'location': random.choice(LOCATIONS),
-            'bio': f"Hi, I'm {random.choice(FIRST_NAMES)} and I love helping others!",
+            'bio': f"Hi, I'm {first_name} and I love helping others learn new skills!",
         })
         user.set_password('demodemo')
         user.save()
@@ -103,10 +114,12 @@ def create_matches_transactions_reviews(users, offers, requests):
 
 
 def run():
+    print("Seeding demo data...")
     users = create_users()
     skills = create_skills()
-    offers, reqs = create_offers_requests(users, skills)
-    create_matches_transactions_reviews(users, offers, reqs)
-    print("Seeded demo data: users, skills, offers, requests, matches, transactions, reviews.")
+    offers, requests = create_offers_requests(users, skills)
+    accepted, completed = create_matches_transactions_reviews(users, offers, requests)
+    print(f"Seeded demo data: {len(users)} users, {len(skills)} skills, {len(offers)} offers, {len(requests)} requests, {len(accepted)} accepted matches, {len(completed)} completed matches.")
+    print("Demo login: user1@example.com / demodemo (after seeding).")
 
 
