@@ -1,30 +1,58 @@
 {% extends 'base.html' %}
 {% block title %}Offers · SkillBank{% endblock %}
 {% block content %}
-<div class="flex items-center justify-between mb-8">
-  <div>
-    <h1 class="text-4xl font-bold text-gray-900 mb-2">Offers</h1>
-    <p class="text-gray-600">Discover skills from our community members</p>
-  </div>
-  <a href="/offers/new/" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 font-medium flex items-center space-x-2">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="text-center mb-12">
+  <h1 class="text-6xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 animate-bounce-gentle">Offers</h1>
+  <p class="text-xl text-gray-600 max-w-2xl mx-auto">Discover amazing skills from our vibrant community of experts and learners</p>
+</div>
+
+<div class="flex justify-center mb-10">
+  <a href="/offers/new/" class="group relative px-8 py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-3xl shadow-2xl hover:shadow-3xl hover:-translate-y-2 transition-all duration-300 font-bold text-lg flex items-center space-x-3 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <svg class="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
     </svg>
-    <span>New Offer</span>
+    <span class="relative z-10">Create New Offer</span>
   </a>
 </div>
 
-<div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-8">
+<div class="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/30 mb-10">
+  <div class="text-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">Find Your Perfect Match</h2>
+    <p class="text-gray-600">Filter by skills, location, and availability</p>
+  </div>
   <form class="grid grid-cols-1 md:grid-cols-4 gap-4" hx-get="/offers/" hx-target="#results" hx-push-url="true">
-    <select name="skill" class="border border-gray-300 rounded-xl p-3 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-      <option value="">All skills</option>
-      {% for s in skills %}
-        <option value="{{ s.id }}" {% if filters.skill|default:'' == s.id|stringformat:'s' %}selected{% endif %}>{{ s.name }}</option>
-      {% endfor %}
-    </select>
-    <input class="border border-gray-300 rounded-xl p-3 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" type="text" name="location" placeholder="Location" value="{{ filters.location }}" />
-    <input class="border border-gray-300 rounded-xl p-3 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" type="text" name="availability" placeholder="Availability" value="{{ filters.availability }}" />
-    <button class="px-6 py-3 bg-gray-700 hover:bg-gray-800 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:shadow-xl">Filter</button>
+    <div class="relative">
+      <select name="skill" class="w-full border-2 border-gray-200 rounded-2xl p-4 bg-white/90 backdrop-blur focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-gray-700 font-medium">
+        <option value="">All skills</option>
+        {% for s in skills %}
+          <option value="{{ s.id }}" {% if filters.skill|default:'' == s.id|stringformat:'s' %}selected{% endif %}>{{ s.name }}</option>
+        {% endfor %}
+      </select>
+      <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="relative">
+      <input class="w-full border-2 border-gray-200 rounded-2xl p-4 bg-white/90 backdrop-blur focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300" type="text" name="location" placeholder="Location" value="{{ filters.location }}" />
+      <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="relative">
+      <input class="w-full border-2 border-gray-200 rounded-2xl p-4 bg-white/90 backdrop-blur focus:ring-4 focus:ring-pink-500/20 focus:border-pink-500 transition-all duration-300" type="text" name="availability" placeholder="Availability" value="{{ filters.availability }}" />
+      <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+    </div>
+    <button class="px-8 py-4 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white rounded-2xl transition-all duration-300 font-bold shadow-xl hover:shadow-2xl transform hover:scale-105">Filter</button>
   </form>
 </div>
 
