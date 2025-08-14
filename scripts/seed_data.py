@@ -294,10 +294,10 @@ def generate_realistic_times():
     now = timezone.now()
     times = []
     
-    # Generate times over the last 30 days
-    for i in range(50):  # We'll create 50 offers
-        # Random day within last 30 days
-        days_ago = random.randint(0, 30)
+    # Generate times over the last 30 days - create more than we need
+    for i in range(100):  # Generate 100 times for 50+ offers/requests
+        # Random day within last 30 days (avoid today to ensure past times)
+        days_ago = random.randint(1, 30)
         # Random hour of the day (more activity during business hours)
         hour = random.choices(
             range(24),
@@ -357,7 +357,7 @@ def create_offers_requests(users, skills):
                 user = random.choice(users)
                 title = random.choice(skill_data['titles'])
                 description = random.choice(skill_data['descriptions'])
-                posting_time = posting_times.pop() if posting_times else timezone.now()
+                posting_time = posting_times.pop() if posting_times else (timezone.now() - timedelta(days=random.randint(1, 30), hours=random.randint(1, 23), minutes=random.randint(1, 59)))
                 
                 # Realistic hour values based on skill complexity
                 hour_value = random.choice([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
@@ -393,7 +393,7 @@ def create_offers_requests(users, skills):
                     request_user = random.choice(users)
                     request_title = f"Looking to learn {skill_name}"
                     request_description = f"I'm interested in learning {skill_name.lower()} and would love to connect with someone who can teach me the fundamentals."
-                    request_posting_time = posting_times.pop() if posting_times else timezone.now()
+                    request_posting_time = posting_times.pop() if posting_times else (timezone.now() - timedelta(days=random.randint(1, 30), hours=random.randint(1, 23), minutes=random.randint(1, 59)))
                     
                     request = Request.objects.create(
                         user=request_user,
