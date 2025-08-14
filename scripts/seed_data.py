@@ -14,8 +14,12 @@ FIRST_NAMES = ["Alex", "Sam", "Jordan", "Taylor", "Casey", "Riley", "Jamie", "Mo
 LAST_NAMES = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
               "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin"]
 
-USERNAMES = ["alex_dev", "sam_codes", "jordan_creative", "taylor_teach", "casey_help", "riley_skills", "jamie_tech", "morgan_art", "drew_build", "avery_learn",
-             "quinn_design", "harper_write", "rowan_teach", "cameron_help", "emerson_skill", "kai_creative", "hayden_tech", "jules_art", "parker_build", "skyler_learn"]
+REALISTIC_USERNAMES = [
+    "alex_smith", "sam_johnson", "jordan_williams", "taylor_brown", "casey_jones",
+    "riley_garcia", "jamie_miller", "morgan_davis", "drew_rodriguez", "avery_martinez",
+    "quinn_hernandez", "harper_lopez", "rowan_gonzalez", "cameron_wilson", "emerson_anderson",
+    "kai_thomas", "hayden_taylor", "jules_moore", "parker_jackson", "skyler_martin"
+]
 
 LOCATIONS = ["NYC", "SF", "Austin", "Seattle", "Chicago", "Remote", "London", "Berlin"]
 SKILL_NAMES = [
@@ -30,16 +34,16 @@ def create_users(num=20):
     User = get_user_model()
     users = []
     for i in range(num):
-        first_name = random.choice(FIRST_NAMES)
-        last_name = random.choice(LAST_NAMES)
-        username = USERNAMES[i] if i < len(USERNAMES) else f"{first_name.lower()}_{random.choice(['dev', 'help', 'skill', 'teach', 'art', 'tech'])}"
+        first_name = FIRST_NAMES[i] if i < len(FIRST_NAMES) else random.choice(FIRST_NAMES)
+        last_name = LAST_NAMES[i] if i < len(LAST_NAMES) else random.choice(LAST_NAMES)
+        username = REALISTIC_USERNAMES[i] if i < len(REALISTIC_USERNAMES) else f"{first_name.lower()}_{last_name.lower()}"
         email = f"{username}@example.com"
         user, _ = User.objects.get_or_create(username=username, defaults={
             'email': email,
             'first_name': first_name,
             'last_name': last_name,
             'location': random.choice(LOCATIONS),
-            'bio': f"Hi, I'm {first_name} and I love helping others learn new skills!",
+            'bio': f"Hi, I'm {first_name} {last_name} and I love helping others learn new skills!",
         })
         user.set_password('demodemo')
         user.save()
@@ -120,6 +124,6 @@ def run():
     offers, requests = create_offers_requests(users, skills)
     accepted, completed = create_matches_transactions_reviews(users, offers, requests)
     print(f"Seeded demo data: {len(users)} users, {len(skills)} skills, {len(offers)} offers, {len(requests)} requests, {len(accepted)} accepted matches, {len(completed)} completed matches.")
-    print("Demo login: user1@example.com / demodemo (after seeding).")
+    print("Demo login: alex_smith@example.com / demodemo (after seeding).")
 
 
