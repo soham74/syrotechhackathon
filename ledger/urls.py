@@ -6,3 +6,4 @@ urlpatterns = [
     path('wallet/', views.wallet, name='wallet'),
 ]
 
+

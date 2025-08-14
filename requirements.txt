@@ -1,0 +1,13 @@
+Django>=5,<6
+
+django-crispy-forms>=2,<3
+
+crispy-tailwind>=0.5,<1
+
+whitenoise>=6,<7
+
+dj-database-url>=2,<3
+
+python-dotenv>=1,<2
+
+vercel-wsgi>=0.8.2,<1

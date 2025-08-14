@@ -15,3 +15,4 @@ def test_request_form_required_fields():
     assert 'title' in form.errors
     assert 'description' in form.errors
 
+

@@ -15,3 +15,4 @@ class ReviewForm(forms.ModelForm):
             'rating': forms.RadioSelect(choices=[(i, str(i)) for i in range(1, 6)]),
         }
 
+

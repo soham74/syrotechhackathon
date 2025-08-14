@@ -17,3 +17,4 @@ class RequestForm(forms.ModelForm):
             'skill', 'title', 'description', 'hours_needed', 'when', 'location', 'is_active'
         ]
 
+

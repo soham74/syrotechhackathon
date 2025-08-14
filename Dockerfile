@@ -21,3 +21,4 @@ ENV DJANGO_SETTINGS_MODULE=core.settings
 
 CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
 
+

@@ -19,3 +19,4 @@ urlpatterns = [
     path('requests/<int:pk>/toggle/', views.request_toggle, name='requests-toggle'),
 ]
 
+

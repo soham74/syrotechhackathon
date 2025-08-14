@@ -26,3 +26,4 @@ def test_only_participants_can_accept_cancel(client: Client):
     resp2 = client.post(f'/matches/{m.id}/accept')
     assert resp2.status_code in (200, 302)
 
+
