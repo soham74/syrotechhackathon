@@ -1,389 +1,447 @@
 import random
-from decimal import Decimal
-from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
-from django.utils.text import slugify
+from django.utils import timezone
+from datetime import datetime, timedelta
 from directory.models import Skill, Offer, Request
-from matches.models import Match
-from ledger.models import Transaction
-from reviews.models import Review
 
+User = get_user_model()
 
-FIRST_NAMES = ["Alex", "Sam", "Jordan", "Taylor", "Casey", "Riley", "Jamie", "Morgan", "Drew", "Avery",
-               "Quinn", "Harper", "Rowan", "Cameron", "Emerson", "Kai", "Hayden", "Jules", "Parker", "Skyler"]
-
-LAST_NAMES = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
-              "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin"]
-
-REALISTIC_USERNAMES = [
-    "alex_smith", "sam_johnson", "jordan_williams", "taylor_brown", "casey_jones",
-    "riley_garcia", "jamie_miller", "morgan_davis", "drew_rodriguez", "avery_martinez",
-    "quinn_hernandez", "harper_lopez", "rowan_gonzalez", "cameron_wilson", "emerson_anderson",
-    "kai_thomas", "hayden_taylor", "jules_moore", "parker_jackson", "skyler_martin"
+# Realistic names for more diverse users
+FIRST_NAMES = [
+    'Alex', 'Jordan', 'Sam', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Quinn',
+    'Avery', 'Blake', 'Cameron', 'Drew', 'Emery', 'Finley', 'Gray', 'Hayden',
+    'Jamie', 'Kendall', 'Logan', 'Mason', 'Noah', 'Parker', 'Reese', 'Sage',
+    'Skyler', 'Tyler', 'Vaughn', 'Wren', 'Zion', 'Adrian', 'Brook', 'Cedar',
+    'Dakota', 'Eden', 'Fern', 'Gale', 'Harper', 'Indigo', 'Jade', 'Kai',
+    'Lane', 'Meadow', 'Nova', 'Ocean', 'Phoenix', 'River', 'Sky', 'Storm',
+    'Willow', 'Zara', 'Atlas', 'Bear', 'Cedar', 'Dove', 'Eagle', 'Fox',
+    'Hawk', 'Iris', 'Juniper', 'Lark', 'Maple', 'Nightingale', 'Oak', 'Pine',
+    'Quail', 'Raven', 'Sparrow', 'Thrush', 'Violet', 'Wolf', 'Yarrow', 'Zen'
 ]
 
-LOCATIONS = ["NYC", "SF", "Austin", "Seattle", "Chicago", "Remote", "London", "Berlin"]
-SKILL_NAMES = [
-    "Web Design", "Python", "Gardening", "Guitar", "Cooking", "Math Tutoring", "House Painting", "Yoga",
-    "Copywriting", "Photography", "Sewing", "3D Printing", "Bike Repair", "Public Speaking", "Data Entry",
-    "Spanish", "French", "JavaScript", "Carpentry", "Illustration", "Video Editing", "Baking", "Dog Training",
-    "Singing", "Barista Skills", "Sourdough"
+LAST_NAMES = [
+    'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller',
+    'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez',
+    'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+    'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark',
+    'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King',
+    'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores', 'Green',
+    'Adams', 'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell', 'Mitchell',
+    'Carter', 'Roberts', 'Gomez', 'Phillips', 'Evans', 'Turner', 'Diaz',
+    'Parker', 'Cruz', 'Edwards', 'Collins', 'Reyes', 'Stewart', 'Morris',
+    'Morales', 'Murphy', 'Cook', 'Rogers', 'Gutierrez', 'Ortiz', 'Morgan',
+    'Cooper', 'Peterson', 'Bailey', 'Reed', 'Kelly', 'Howard', 'Ramos',
+    'Kim', 'Cox', 'Ward', 'Richardson', 'Watson', 'Brooks', 'Chavez',
+    'Wood', 'James', 'Bennett', 'Gray', 'Mendoza', 'Ruiz', 'Hughes',
+    'Price', 'Alvarez', 'Castillo', 'Sanders', 'Patel', 'Myers', 'Long',
+    'Ross', 'Foster', 'Jimenez', 'Powell', 'Jenkins', 'Perry', 'Russell',
+    'Sullivan', 'Bell', 'Coleman', 'Butler', 'Henderson', 'Barnes', 'Gonzales'
 ]
 
-# Realistic offer titles and descriptions
-OFFER_DATA = {
-    "Web Design": {
-        "titles": [
-            "Modern Website Design & Development",
-            "Responsive Web Design Help",
-            "UI/UX Design Consultation",
-            "WordPress Site Building",
-            "Frontend Development Tutoring"
+# Realistic usernames based on names
+def generate_username(first_name, last_name):
+    patterns = [
+        f"{first_name.lower()}_{last_name.lower()}",
+        f"{first_name.lower()}{last_name.lower()}",
+        f"{first_name.lower()}.{last_name.lower()}",
+        f"{first_name.lower()}{random.randint(10, 99)}",
+        f"{first_name.lower()}_{random.choice(['dev', 'design', 'tech', 'creative', 'pro'])}",
+        f"{first_name.lower()}{random.choice(['2024', '23', '24', '2023'])}",
+        f"{first_name.lower()}_{random.choice(['works', 'studio', 'lab', 'hub'])}"
+    ]
+    return random.choice(patterns)
+
+# Comprehensive skill-specific data
+SKILL_DATA = {
+    'JavaScript': {
+        'titles': [
+            'JavaScript Development & Modern ES6+',
+            'Frontend JavaScript & React Fundamentals',
+            'JavaScript Backend with Node.js',
+            'JavaScript Debugging & Performance',
+            'JavaScript Testing & Best Practices',
+            'JavaScript for Beginners',
+            'Advanced JavaScript Patterns',
+            'JavaScript API Integration',
+            'JavaScript Security & Best Practices',
+            'JavaScript Build Tools & Webpack'
         ],
-        "descriptions": [
-            "Professional web designer with 5+ years experience. I can help you create modern, responsive websites using HTML, CSS, and JavaScript. Perfect for beginners or those looking to improve their skills.",
-            "Looking to build your portfolio website? I specialize in clean, modern designs that convert. Can work with Figma, Adobe XD, or code from scratch.",
-            "Need help with your website project? I offer one-on-one tutoring in web design principles, responsive design, and modern frameworks like React and Vue.js.",
-            "WordPress expert here! I can help you set up, customize, and maintain your WordPress site. From themes to plugins, I've got you covered.",
-            "Frontend developer offering personalized coding sessions. Learn HTML, CSS, JavaScript, and modern frameworks. Great for students and career changers."
+        'descriptions': [
+            'Experienced JavaScript developer offering tutoring in modern ES6+, async programming, and real-world project development. I can help you build interactive web applications and understand JavaScript fundamentals.',
+            'Frontend specialist with 5+ years building React applications. I can teach you component architecture, state management, and modern JavaScript patterns used in production apps.',
+            'Full-stack JavaScript developer specializing in Node.js backend development. Learn server-side JavaScript, API design, database integration, and deployment strategies.',
+            'JavaScript debugging expert who can help you troubleshoot complex issues, optimize performance, and understand browser developer tools. Perfect for intermediate developers.',
+            'Quality-focused JavaScript developer teaching testing methodologies, TDD practices, and code quality standards. Learn Jest, Mocha, and testing best practices.',
+            'Patient teacher offering beginner-friendly JavaScript lessons. We\'ll start with basics and gradually build up to building your first web applications.',
+            'Advanced JavaScript concepts including closures, prototypes, design patterns, and functional programming. For developers ready to level up their skills.',
+            'API integration specialist teaching how to work with REST APIs, GraphQL, and third-party services using JavaScript. Real-world examples included.',
+            'Security-conscious developer teaching JavaScript security best practices, input validation, XSS prevention, and secure coding patterns.',
+            'Build tool expert specializing in Webpack, Babel, and modern JavaScript tooling. Learn how to set up efficient development workflows.'
         ]
     },
-    "Python": {
-        "titles": [
-            "Python Programming Tutoring",
-            "Data Science with Python",
-            "Web Development with Django/Flask",
-            "Python for Beginners",
-            "Automation Scripts & Tools"
+    'Python': {
+        'titles': [
+            'Python Programming Fundamentals',
+            'Data Science with Python',
+            'Python Web Development (Django/Flask)',
+            'Python Automation & Scripting',
+            'Python for Machine Learning',
+            'Python API Development',
+            'Python Testing & Debugging',
+            'Python Database Integration',
+            'Python Security & Best Practices',
+            'Python DevOps & Deployment'
         ],
-        "descriptions": [
-            "Experienced Python developer offering personalized tutoring. Whether you're a complete beginner or want to learn advanced topics like data science, I can help you master Python programming.",
-            "Data scientist with expertise in pandas, numpy, and scikit-learn. Learn how to analyze data, create visualizations, and build machine learning models with Python.",
-            "Full-stack developer specializing in Django and Flask. I can teach you how to build web applications, APIs, and deploy them to production. Perfect for aspiring developers.",
-            "Patient tutor for Python beginners! I'll help you understand programming fundamentals, work through exercises, and build your first projects. No prior experience needed.",
-            "Automation specialist here! Learn how to write Python scripts to automate repetitive tasks, scrape websites, and integrate with APIs. Save hours of manual work."
+        'descriptions': [
+            'Experienced Python developer offering comprehensive programming lessons. From basic syntax to advanced concepts, I can help you build real-world applications.',
+            'Data science professional teaching Python for analytics, pandas, numpy, and visualization libraries. Perfect for beginners transitioning to data science.',
+            'Web development specialist with Django and Flask experience. Learn full-stack Python development, database design, and deployment strategies.',
+            'Automation expert teaching Python scripting for productivity, web scraping, file processing, and system administration tasks.',
+            'ML engineer offering Python lessons focused on scikit-learn, TensorFlow, and practical machine learning applications. Real project examples included.',
+            'API development specialist teaching RESTful API design, FastAPI, and microservices architecture using Python. Industry best practices covered.',
+            'Testing expert offering lessons in pytest, unittest, and debugging techniques. Learn how to write maintainable, testable Python code.',
+            'Database specialist teaching SQLAlchemy, PostgreSQL integration, and data modeling with Python. Real-world database design patterns.',
+            'Security-focused developer teaching Python security best practices, input validation, and secure coding patterns for production applications.',
+            'DevOps engineer specializing in Python deployment, Docker, CI/CD pipelines, and cloud infrastructure. Learn production-ready deployment strategies.'
         ]
     },
-    "Gardening": {
-        "titles": [
-            "Organic Gardening Consultation",
-            "Urban Garden Setup & Maintenance",
-            "Plant Care & Troubleshooting",
-            "Seasonal Gardening Tips",
-            "Indoor Plant Care"
+    'Barista Skills': {
+        'titles': [
+            'Professional Barista Training',
+            'Coffee Brewing & Latte Art',
+            'Espresso Machine Mastery',
+            'Coffee Bean Selection & Roasting',
+            'Cafe Management & Customer Service',
+            'Specialty Coffee Preparation',
+            'Milk Steaming & Texturing',
+            'Coffee Equipment Maintenance',
+            'Coffee Tasting & Cupping',
+            'Home Barista Setup & Skills'
         ],
-        "descriptions": [
-            "Certified master gardener with 10+ years experience. I can help you plan, plant, and maintain a beautiful organic garden. From soil preparation to pest management.",
-            "Urban gardening specialist! Learn how to grow food in small spaces, balconies, or community gardens. I'll help you maximize your harvest in limited space.",
-            "Having trouble with your plants? I can diagnose issues, recommend solutions, and teach you proper care techniques. From watering schedules to fertilizer needs.",
-            "Seasonal gardening expert offering year-round guidance. Learn what to plant when, how to prepare for each season, and maintain a productive garden all year.",
-            "Indoor plant enthusiast here! I can help you choose the right plants for your space, teach proper care techniques, and troubleshoot common indoor gardening issues."
+        'descriptions': [
+            'Certified barista with 8 years of experience in specialty coffee shops. I can teach you everything from basic brewing to advanced latte art techniques.',
+            'Latte art specialist offering hands-on training in milk steaming, texturing, and creating beautiful designs. Perfect for aspiring baristas.',
+            'Espresso machine expert teaching proper extraction, grind adjustment, and machine maintenance. Learn the fundamentals of great espresso.',
+            'Coffee roaster and bean expert teaching coffee origins, roasting profiles, and how to select the perfect beans for different brewing methods.',
+            'Cafe manager with experience in customer service, workflow optimization, and team management. Learn both technical skills and business operations.',
+            'Specialty coffee preparation expert teaching pour-over, French press, AeroPress, and other brewing methods. Discover your perfect cup.',
+            'Milk steaming specialist focusing on proper technique, temperature control, and creating silky microfoam for perfect lattes and cappuccinos.',
+            'Equipment maintenance expert teaching proper cleaning, calibration, and troubleshooting for espresso machines and grinders.',
+            'Coffee cupping specialist teaching how to evaluate coffee quality, identify flavor profiles, and develop your palate for coffee tasting.',
+            'Home barista setup consultant helping you choose equipment, set up your coffee station, and develop skills for home brewing excellence.'
         ]
     },
-    "Guitar": {
-        "titles": [
-            "Acoustic Guitar Lessons",
-            "Electric Guitar & Rock Techniques",
-            "Fingerstyle Guitar Mastery",
-            "Music Theory for Guitarists",
-            "Songwriting & Arrangement"
+    'Copywriting': {
+        'titles': [
+            'Professional Copywriting & Content Creation',
+            'Marketing Copy & Conversion Optimization',
+            'Brand Voice & Messaging Strategy',
+            'SEO Content Writing',
+            'Social Media Copywriting',
+            'Email Marketing Copy',
+            'Website Copy & UX Writing',
+            'Creative Writing & Storytelling',
+            'Technical Writing & Documentation',
+            'Copywriting for Small Businesses'
         ],
-        "descriptions": [
-            "Professional guitarist offering personalized acoustic guitar lessons. Learn proper technique, chord progressions, and your favorite songs. All skill levels welcome!",
-            "Rock guitarist with 15+ years experience. I can teach you electric guitar techniques, soloing, effects pedals, and how to play like your favorite rock stars.",
-            "Fingerstyle specialist here! Learn beautiful fingerpicking patterns, classical techniques, and how to play complex arrangements. Perfect for intermediate players.",
-            "Music theory made simple for guitarists! I'll teach you scales, chord construction, and how to understand the music you're playing. No boring textbooks!",
-            "Singer-songwriter offering lessons in songwriting, arrangement, and performance. Learn how to write your own songs and develop your unique style."
+        'descriptions': [
+            'Professional copywriter with 10+ years creating compelling content for brands. I can teach you persuasive writing techniques and content strategy.',
+            'Conversion optimization specialist teaching how to write copy that drives action. Learn psychological triggers, A/B testing, and ROI-focused writing.',
+            'Brand strategist helping you develop unique voice, messaging frameworks, and consistent brand communication across all channels.',
+            'SEO content expert teaching keyword research, on-page optimization, and writing content that ranks while engaging readers.',
+            'Social media specialist offering training in platform-specific copywriting, engagement strategies, and viral content creation.',
+            'Email marketing expert teaching persuasive email sequences, subject line optimization, and conversion-focused email copywriting.',
+            'UX writer helping you create clear, user-friendly website copy that guides visitors and improves conversion rates.',
+            'Creative writer specializing in storytelling, brand narratives, and emotional connection through words. Perfect for brand building.',
+            'Technical writer teaching how to create clear documentation, user guides, and complex information in accessible language.',
+            'Small business copywriting specialist helping entrepreneurs create effective marketing materials, website copy, and brand messaging.'
         ]
     },
-    "Cooking": {
-        "titles": [
-            "Home Cooking Fundamentals",
-            "International Cuisine Classes",
-            "Meal Prep & Planning",
-            "Baking & Pastry Arts",
-            "Healthy Cooking Techniques"
+    'French': {
+        'titles': [
+            'French Conversation & Fluency',
+            'French Grammar & Writing',
+            'Business French & Professional Communication',
+            'French Literature & Culture',
+            'French Pronunciation & Accent Reduction',
+            'French for Travel & Daily Life',
+            'French Exam Preparation (DELF/TCF)',
+            'French Translation & Interpretation',
+            'French for Children & Beginners',
+            'French Immersion & Cultural Exchange'
         ],
-        "descriptions": [
-            "Home chef with a passion for teaching! Learn essential cooking techniques, knife skills, and how to create delicious meals from scratch. Perfect for beginners.",
-            "Traveled the world and learned to cook! I can teach you authentic dishes from Italy, Thailand, Mexico, and more. Spice up your cooking repertoire.",
-            "Meal prep expert here! Learn how to plan, shop, and cook meals for the week. Save time, money, and eat healthier with efficient meal preparation.",
-            "Pastry chef offering baking lessons! From bread to cakes, cookies to croissants. Learn the science of baking and create beautiful, delicious treats.",
-            "Nutrition-focused cooking instructor. Learn how to cook healthy, flavorful meals that support your wellness goals. From plant-based to Mediterranean cuisine."
+        'descriptions': [
+            'Native French speaker offering conversational practice and fluency development. Focus on real-world communication and cultural context.',
+            'Experienced French teacher specializing in grammar, writing, and academic French. Perfect for students preparing for exams or academic work.',
+            'Business French specialist teaching professional communication, business vocabulary, and cultural etiquette for French-speaking workplaces.',
+            'French literature and culture expert offering lessons in French literature, history, and cultural understanding. Enrich your French learning.',
+            'Pronunciation specialist helping you master French sounds, reduce accent, and speak with confidence. Individualized accent coaching.',
+            'Travel-focused French lessons covering essential vocabulary, phrases, and cultural tips for visiting French-speaking countries.',
+            'Exam preparation expert for DELF, TCF, and other French proficiency tests. Structured lessons with practice materials and strategies.',
+            'Professional translator offering lessons in French translation techniques, interpretation skills, and cross-cultural communication.',
+            'Patient teacher specializing in French for children and absolute beginners. Fun, interactive lessons with games and activities.',
+            'Cultural immersion specialist offering French lessons combined with cultural exchange, cooking, music, and authentic French experiences.'
         ]
     },
-    "Math Tutoring": {
-        "titles": [
-            "High School Math Support",
-            "College Calculus & Statistics",
-            "Math Test Prep & Strategies",
-            "Math for Adults",
-            "STEM Math Applications"
+    'Public Speaking': {
+        'titles': [
+            'Public Speaking & Presentation Skills',
+            'Confidence Building & Stage Presence',
+            'Speech Writing & Storytelling',
+            'Business Presentations & Pitching',
+            'TED Talk Preparation & Delivery',
+            'Voice Projection & Vocal Techniques',
+            'Audience Engagement & Interaction',
+            'Speech Anxiety & Fear Management',
+            'Toastmasters & Speaking Clubs',
+            'Executive Communication & Leadership'
         ],
-        "descriptions": [
-            "Certified math teacher offering support for algebra, geometry, and trigonometry. I can help you understand concepts, solve problems, and build confidence in math.",
-            "Math professor with PhD offering advanced math tutoring. Calculus, linear algebra, statistics, and more. Perfect for college students and professionals.",
-            "Test prep specialist! I can help you prepare for SAT, ACT, GRE, or any math exam. Learn strategies, practice problems, and improve your scores.",
-            "Math tutor for adults! Whether you're returning to school, changing careers, or just want to improve your math skills, I can help you succeed.",
-            "Engineer offering practical math applications. Learn how math is used in science, technology, and everyday problem-solving. Make math relevant and interesting."
+        'descriptions': [
+            'Professional public speaking coach with 15 years of experience. I can help you overcome stage fright and deliver compelling presentations.',
+            'Confidence-building specialist focusing on body language, stage presence, and mental preparation for public speaking success.',
+            'Speech writer and storytelling expert teaching how to craft memorable speeches, structure presentations, and connect with audiences.',
+            'Business communication specialist helping professionals deliver effective presentations, pitches, and executive communications.',
+            'TED Talk coach specializing in idea development, speech crafting, and delivery techniques for impactful presentations.',
+            'Voice coach teaching projection, articulation, pacing, and vocal variety for powerful, engaging speaking.',
+            'Audience engagement expert teaching how to read crowds, handle questions, and create interactive, memorable presentations.',
+            'Anxiety management specialist helping speakers overcome fear, build confidence, and develop mental resilience for public speaking.',
+            'Toastmasters mentor guiding you through structured speaking programs and helping you join speaking communities.',
+            'Executive communication coach specializing in leadership presentations, boardroom speaking, and high-stakes communication.'
         ]
     },
-    "House Painting": {
-        "titles": [
-            "Interior Painting Techniques",
-            "Exterior House Painting",
-            "Color Consultation & Design",
-            "Paint Prep & Surface Repair",
-            "Faux Finishing & Textures"
+    'Gardening': {
+        'titles': [
+            'Organic Gardening & Sustainable Practices',
+            'Urban Gardening & Container Growing',
+            'Vegetable Gardening & Food Production',
+            'Garden Design & Landscape Planning',
+            'Plant Care & Maintenance',
+            'Seasonal Gardening & Crop Planning',
+            'Indoor Plants & Houseplant Care',
+            'Garden Pest Management & Natural Solutions',
+            'Composting & Soil Health',
+            'Garden Photography & Documentation'
         ],
-        "descriptions": [
-            "Professional painter with 8+ years experience. I can teach you proper painting techniques, tool selection, and how to achieve professional results on your interior projects.",
-            "Exterior painting specialist! Learn how to prepare surfaces, choose the right paint, and apply it correctly for lasting results. Weather-resistant finishes guaranteed.",
-            "Color consultant and designer here! I can help you choose the perfect colors for your space, create color schemes, and understand how colors affect mood and perception.",
-            "Surface preparation expert! Learn how to repair drywall, sand surfaces, and prepare walls for painting. The key to a professional finish is proper preparation.",
-            "Faux finishing artist offering lessons in decorative painting techniques. Learn how to create marble, wood grain, and textured finishes that add character to your home."
+        'descriptions': [
+            'Organic gardening expert with 20 years of experience growing food sustainably. Learn natural pest control, soil building, and eco-friendly practices.',
+            'Urban gardening specialist teaching container gardening, vertical growing, and maximizing small spaces for abundant harvests.',
+            'Vegetable gardening expert helping you grow your own food year-round. From seed starting to harvest, learn complete food production.',
+            'Landscape designer offering garden planning, design principles, and creating beautiful, functional outdoor spaces.',
+            'Plant care specialist teaching proper watering, fertilizing, pruning, and maintenance for healthy, thriving gardens.',
+            'Seasonal gardening expert helping you plan year-round growing, succession planting, and extending your growing season.',
+            'Houseplant expert teaching indoor gardening, plant selection, and creating healthy indoor environments for plants.',
+            'Integrated pest management specialist teaching natural pest control, beneficial insects, and organic solutions for garden problems.',
+            'Soil health expert teaching composting, soil building, and creating rich, fertile soil for optimal plant growth.',
+            'Garden photographer helping you document your garden journey, create beautiful plant photos, and share your gardening story.'
         ]
     },
-    "Yoga": {
-        "titles": [
-            "Vinyasa Flow Yoga",
-            "Yin Yoga & Meditation",
-            "Yoga for Beginners",
-            "Therapeutic Yoga",
-            "Yoga for Athletes"
+    'Video Editing': {
+        'titles': [
+            'Video Editing with Adobe Premiere Pro',
+            'DaVinci Resolve & Color Grading',
+            'YouTube Content Creation & Editing',
+            'Social Media Video Production',
+            'Documentary & Storytelling Editing',
+            'Motion Graphics & After Effects',
+            'Video Editing for Beginners',
+            'Corporate Video Production',
+            'Wedding & Event Video Editing',
+            'Video Editing Workflow & Optimization'
         ],
-        "descriptions": [
-            "Certified yoga instructor specializing in vinyasa flow. Learn proper alignment, breathing techniques, and how to build strength and flexibility through dynamic movement.",
-            "Yin yoga and meditation teacher here! Learn gentle, restorative poses and mindfulness techniques. Perfect for stress relief and deep relaxation.",
-            "Patient instructor for yoga beginners! I'll guide you through basic poses, breathing exercises, and help you develop a safe, sustainable yoga practice.",
-            "Therapeutic yoga specialist offering sessions for back pain, stress, and injury recovery. Learn poses and techniques to support your health and wellness.",
-            "Athletic yoga instructor! Learn how yoga can improve your performance in other sports. Focus on flexibility, balance, and injury prevention for athletes."
+        'descriptions': [
+            'Professional video editor with 12 years of experience in Adobe Premiere Pro. Learn editing fundamentals, advanced techniques, and workflow optimization.',
+            'DaVinci Resolve specialist teaching professional color grading, editing, and post-production workflows used in film and television.',
+            'YouTube content creator helping you edit engaging videos, optimize for platform algorithms, and build your channel through quality editing.',
+            'Social media video expert teaching platform-specific editing, vertical video production, and creating viral content for Instagram, TikTok, and more.',
+            'Documentary editor specializing in storytelling, narrative structure, and creating compelling non-fiction content that engages audiences.',
+            'Motion graphics artist teaching After Effects, animation, and visual effects to enhance your video projects with professional graphics.',
+            'Beginner-friendly video editing instructor starting with fundamentals and gradually building to advanced techniques. No prior experience needed.',
+            'Corporate video specialist teaching business video production, brand consistency, and creating professional content for companies.',
+            'Wedding and event videographer offering editing techniques for capturing and creating beautiful memories from special occasions.',
+            'Workflow optimization expert teaching efficient editing processes, project organization, and time-saving techniques for professional editors.'
         ]
     },
-    "Copywriting": {
-        "titles": [
-            "Content Writing & SEO",
-            "Sales Copy & Marketing",
-            "Creative Writing Workshop",
-            "Business Writing Skills",
-            "Social Media Content"
+    'Data Entry': {
+        'titles': [
+            'Data Entry & Administrative Support',
+            'Excel Spreadsheet Management',
+            'Database Entry & Management',
+            'Document Processing & Organization',
+            'Data Quality & Accuracy Training',
+            'Remote Data Entry Work',
+            'Data Entry Software & Tools',
+            'Administrative Assistant Skills',
+            'Data Entry for Small Businesses',
+            'Data Entry Speed & Efficiency'
         ],
-        "descriptions": [
-            "Professional copywriter with expertise in SEO and content marketing. I can teach you how to write engaging content that ranks well and converts readers into customers.",
-            "Sales copy specialist! Learn how to write compelling headlines, persuasive copy, and marketing materials that drive results. From emails to landing pages.",
-            "Creative writing workshop leader. Develop your voice, learn storytelling techniques, and get feedback on your writing. Perfect for aspiring authors and content creators.",
-            "Business writing consultant. Learn how to write clear, professional emails, reports, and proposals. Improve your communication skills for the workplace.",
-            "Social media expert offering content creation guidance. Learn how to write engaging posts, develop your brand voice, and grow your online presence."
-        ]
-    },
-    "Photography": {
-        "titles": [
-            "Digital Photography Basics",
-            "Portrait Photography",
-            "Landscape & Nature Photography",
-            "Photo Editing & Post-Processing",
-            "Mobile Photography"
-        ],
-        "descriptions": [
-            "Professional photographer teaching digital photography fundamentals. Learn camera settings, composition, lighting, and how to take better photos with any camera.",
-            "Portrait photographer specializing in people photography. Learn how to pose subjects, use natural and artificial lighting, and create flattering portraits.",
-            "Nature and landscape photographer here! Learn how to capture stunning outdoor scenes, work with natural light, and create dramatic landscape images.",
-            "Photo editing expert! Learn Lightroom, Photoshop, and other editing tools. Transform your photos from good to great with professional editing techniques.",
-            "Mobile photography specialist! Learn how to take amazing photos with your smartphone. From composition to editing apps, maximize your phone's camera potential."
+        'descriptions': [
+            'Experienced data entry specialist offering training in accurate, efficient data processing and administrative support skills.',
+            'Excel expert teaching spreadsheet management, data organization, and advanced Excel functions for professional data handling.',
+            'Database specialist teaching proper data entry techniques, database management, and maintaining data integrity across systems.',
+            'Document processing expert helping you organize, categorize, and efficiently process large volumes of documents and information.',
+            'Data quality specialist teaching accuracy techniques, error prevention, and maintaining high standards in data entry work.',
+            'Remote work expert helping you set up efficient home office systems and find legitimate data entry opportunities online.',
+            'Software specialist teaching various data entry tools, automation techniques, and productivity software for efficient work.',
+            'Administrative assistant training covering data entry, office management, and professional support skills for business environments.',
+            'Small business specialist helping entrepreneurs set up efficient data management systems and processes for their operations.',
+            'Speed and efficiency coach teaching techniques to increase data entry speed while maintaining accuracy and quality standards.'
         ]
     }
 }
 
-# Realistic request titles and descriptions
-REQUEST_DATA = {
-    "Web Design": {
-        "titles": [
-            "Need help with my portfolio website",
-            "Looking for website design guidance",
-            "Help with WordPress customization",
-            "Need tutoring in web development",
-            "Want to learn responsive design"
-        ],
-        "descriptions": [
-            "I'm a graphic designer looking to create a professional portfolio website. Need help with layout, responsive design, and making it stand out to potential clients.",
-            "Starting a small business and need a website. Looking for guidance on design, hosting, and getting started with web development. Complete beginner here!",
-            "Have a WordPress site but struggling with customization. Need help with themes, plugins, and making it look professional. Can work with your schedule.",
-            "Computer science student wanting to improve my web development skills. Looking for a mentor to help me with HTML, CSS, and JavaScript projects.",
-            "My website looks terrible on mobile devices. Need help learning responsive design principles and implementing them. Have basic HTML/CSS knowledge."
-        ]
-    },
-    "Python": {
-        "titles": [
-            "Help with Python project",
-            "Need data analysis assistance",
-            "Learning Python for automation",
-            "Struggling with Django framework",
-            "Want to build a web scraper"
-        ],
-        "descriptions": [
-            "Working on a Python project for my coding bootcamp. Need help debugging code and understanding best practices. Have some Python experience but stuck on certain concepts.",
-            "Business analyst needing to learn Python for data analysis. Want to work with pandas and create visualizations. Looking for patient tutor who can explain concepts clearly.",
-            "Tired of doing repetitive tasks at work. Want to learn Python automation to save time. Need help with scripts for file processing and data manipulation.",
-            "Learning Django for a web development project. Understanding the basics but struggling with models, views, and deployment. Need guidance from experienced developer.",
-            "Want to build a web scraper to collect data for my research project. Need help with requests, BeautifulSoup, and handling different website structures."
-        ]
-    },
-    "Gardening": {
-        "titles": [
-            "Help with my vegetable garden",
-            "Need advice on indoor plants",
-            "Struggling with garden pests",
-            "Want to start a balcony garden",
-            "Need help with plant identification"
-        ],
-        "descriptions": [
-            "First-time gardener trying to grow vegetables. Plants aren't growing well and I think I'm doing something wrong. Need help with soil, watering, and general care.",
-            "Killing all my indoor plants! Need someone to teach me proper care techniques, watering schedules, and how to choose the right plants for my apartment.",
-            "My garden is being destroyed by pests. Need help identifying the problem and finding organic solutions. Want to avoid chemical pesticides if possible.",
-            "Live in an apartment with a small balcony. Want to grow herbs and vegetables but don't know where to start. Need help with container gardening and space optimization.",
-            "Have several plants but don't know what they are or how to care for them. Need help with identification and creating proper care routines for each plant."
-        ]
-    }
-}
+# Realistic posting times spread across different days
+def generate_realistic_times():
+    now = timezone.now()
+    times = []
+    
+    # Generate times over the last 30 days
+    for i in range(50):  # We'll create 50 offers
+        # Random day within last 30 days
+        days_ago = random.randint(0, 30)
+        # Random hour of the day (more activity during business hours)
+        hour = random.choices(
+            range(24),
+            weights=[1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 5, 4, 4, 3, 3, 4, 4, 5, 5, 4, 3, 2, 2, 1]
+        )[0]
+        # Random minute
+        minute = random.randint(0, 59)
+        
+        posting_time = now - timedelta(days=days_ago, hours=hour, minutes=minute)
+        times.append(posting_time)
+    
+    return times
 
-
-def create_users(num=20):
-    User = get_user_model()
+def create_users():
     users = []
-    for i in range(num):
-        first_name = FIRST_NAMES[i] if i < len(FIRST_NAMES) else random.choice(FIRST_NAMES)
-        last_name = LAST_NAMES[i] if i < len(LAST_NAMES) else random.choice(LAST_NAMES)
-        username = REALISTIC_USERNAMES[i] if i < len(REALISTIC_USERNAMES) else f"{first_name.lower()}_{last_name.lower()}"
+    for i in range(25):
+        first_name = random.choice(FIRST_NAMES)
+        last_name = random.choice(LAST_NAMES)
+        username = generate_username(first_name, last_name)
         email = f"{username}@example.com"
-        user, _ = User.objects.get_or_create(username=username, defaults={
-            'email': email,
-            'first_name': first_name,
-            'last_name': last_name,
-            'location': random.choice(LOCATIONS),
-            'bio': f"Hi, I'm {first_name} {last_name} and I love helping others learn new skills!",
-        })
-        user.set_password('demodemo')
-        user.save()
+        
+        # Create user with realistic profile
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password='demodemo',
+            first_name=first_name,
+            last_name=last_name
+        )
+        
+        # Add profile info if the model supports it
+        if hasattr(user, 'profile'):
+            user.profile.bio = f"Passionate about sharing knowledge and helping others learn. Based in {random.choice(['San Francisco', 'New York', 'London', 'Berlin', 'Toronto', 'Sydney', 'Remote'])}."
+            user.profile.save()
+        
         users.append(user)
+        print(f"Created user: {first_name} {last_name} ({username})")
+    
     return users
 
-
-def create_skills():
-    skills = []
-    for name in SKILL_NAMES:
-        skill, _ = Skill.objects.get_or_create(name=name, defaults={'slug': slugify(name)})
-        skills.append(skill)
-    return skills
-
-
 def create_offers_requests(users, skills):
-    offers, requests = [], []
+    # Generate realistic posting times
+    posting_times = generate_realistic_times()
+    random.shuffle(posting_times)
     
-    # Create offers with realistic data
-    for _ in range(60):
-        user = random.choice(users)
-        skill = random.choice(skills)
-        
-        # Get realistic title and description
-        skill_data = OFFER_DATA.get(skill.name, {
-            "titles": [f"{skill.name} help"],
-            "descriptions": [f"I can help with {skill.name.lower()}."]
-        })
-        
-        title = random.choice(skill_data["titles"])
-        description = random.choice(skill_data["descriptions"])
-        
-        # Add posting date (within last 30 days)
-        days_ago = random.randint(0, 30)
-        posted_date = datetime.now() - timedelta(days=days_ago)
-        
-        offer = Offer.objects.create(
-            user=user,
-            skill=skill,
-            title=title,
-            description=description,
-            hour_value=random.choice([0.5, 1.0, 1.5, 2.0]),
-            availability=random.choice(["Weeknights", "Weekends", "Flexible", "Mornings", "Afternoons"]),
-            location=random.choice(LOCATIONS),
-            is_active=True,
-        )
-        
-        # Set created_at to realistic date
-        offer.created_at = posted_date
-        offer.save(update_fields=['created_at'])
-        offers.append(offer)
+    offers_created = 0
+    requests_created = 0
     
-    # Create requests with realistic data
-    for _ in range(40):
-        user = random.choice(users)
-        skill = random.choice(skills)
-        
-        # Get realistic title and description
-        skill_data = REQUEST_DATA.get(skill.name, {
-            "titles": [f"Need {skill.name}"],
-            "descriptions": [f"Looking for help with {skill.name.lower()}."]
-        })
-        
-        title = random.choice(skill_data["titles"])
-        description = random.choice(skill_data["descriptions"])
-        
-        # Add posting date (within last 30 days)
-        days_ago = random.randint(0, 30)
-        posted_date = datetime.now() - timedelta(days=days_ago)
-        
-        request = Request.objects.create(
-            user=user,
-            skill=skill,
-            title=title,
-            description=description,
-            hours_needed=random.choice([0.5, 1.0, 2.0, 3.0, 4.0]),
-            when=random.choice(["Evenings", "Weekends", "Next week", "This month", "Flexible"]),
-            location=random.choice(LOCATIONS),
-            is_active=True,
-        )
-        
-        # Set created_at to realistic date
-        request.created_at = posted_date
-        request.save(update_fields=['created_at'])
-        requests.append(request)
+    for skill in skills:
+        skill_name = skill.name
+        if skill_name in SKILL_DATA:
+            skill_data = SKILL_DATA[skill_name]
+            
+            # Create 3-5 offers per skill
+            num_offers = random.randint(3, 5)
+            for i in range(num_offers):
+                user = random.choice(users)
+                title = random.choice(skill_data['titles'])
+                description = random.choice(skill_data['descriptions'])
+                posting_time = posting_times.pop() if posting_times else timezone.now()
+                
+                # Realistic hour values based on skill complexity
+                hour_value = random.choice([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+                
+                # Realistic availability options
+                availability = random.choice([
+                    'Weekdays', 'Weekends', 'Evenings', 'Flexible', 
+                    'Mornings', 'Afternoons', 'By appointment', 'Remote only'
+                ])
+                
+                # Realistic locations
+                location = random.choice([
+                    'San Francisco', 'New York', 'London', 'Berlin', 
+                    'Toronto', 'Sydney', 'Remote', 'Chicago', 'Austin',
+                    'Seattle', 'Boston', 'Los Angeles', 'Vancouver'
+                ])
+                
+                offer = Offer.objects.create(
+                    user=user,
+                    skill=skill,
+                    title=title,
+                    description=description,
+                    hour_value=hour_value,
+                    availability=availability,
+                    location=location,
+                    is_active=random.choice([True, True, True, False]),  # 75% active
+                    created_at=posting_time
+                )
+                offers_created += 1
+                
+                # Create 1-2 requests per skill
+                if random.choice([True, False]):
+                    request_user = random.choice(users)
+                    request_title = f"Looking to learn {skill_name}"
+                    request_description = f"I'm interested in learning {skill_name.lower()} and would love to connect with someone who can teach me the fundamentals."
+                    request_posting_time = posting_times.pop() if posting_times else timezone.now()
+                    
+                    request = Request.objects.create(
+                        user=request_user,
+                        skill=skill,
+                        title=request_title,
+                        description=request_description,
+                        hours_needed=random.choice([0.5, 1.0, 1.5, 2.0]),
+                        when=random.choice(['Weekends', 'Evenings', 'Flexible', 'Weekdays']),
+                        location=random.choice(['San Francisco', 'New York', 'London', 'Berlin', 'Remote']),
+                        is_active=random.choice([True, True, False]),  # 67% active
+                        created_at=request_posting_time
+                    )
+                    requests_created += 1
     
-    return offers, requests
-
-
-def create_matches_transactions_reviews(users, offers, requests):
-    accepted, completed = [], []
-    for _ in range(10):
-        offer = random.choice(offers)
-        req = random.choice(requests)
-        requester = req.user
-        provider = offer.user
-        m = Match.objects.create(offer=offer, request=req, requester=requester, provider=provider, agreed_hours=Decimal('1.0'))
-        m.status = Match.STATUS_ACCEPTED
-        m.save(update_fields=['status'])
-        accepted.append(m)
-    for _ in range(8):
-        offer = random.choice(offers)
-        req = random.choice(requests)
-        requester = req.user
-        provider = offer.user
-        m = Match.objects.create(offer=offer, request=req, requester=requester, provider=provider, agreed_hours=Decimal('1.0'))
-        Transaction.objects.create(from_user=requester, to_user=provider, hours=Decimal('1.0'), match=m)
-        m.status = Match.STATUS_DONE
-        m.save(update_fields=['status'])
-        # Add reviews from both sides
-        Review.objects.create(match=m, rater=requester, ratee=provider, rating=random.randint(3, 5), comment="Great job!")
-        Review.objects.create(match=m, rater=provider, ratee=requester, rating=random.randint(3, 5), comment="Pleasure to work with.")
-        completed.append(m)
-    return accepted, completed
-
+    print(f"Created {offers_created} offers and {requests_created} requests")
+    return offers_created, requests_created
 
 def run():
-    print("Seeding demo data...")
+    print("Starting SkillBank data seeding...")
+    
+    # Clear existing data
+    Offer.objects.all().delete()
+    Request.objects.all().delete()
+    User.objects.filter(email__endswith='@example.com').delete()
+    
+    # Create skills if they don't exist
+    skill_names = ['JavaScript', 'Python', 'Barista Skills', 'Copywriting', 'French', 'Public Speaking', 'Gardening', 'Video Editing', 'Data Entry']
+    skills = []
+    
+    for skill_name in skill_names:
+        skill, created = Skill.objects.get_or_create(
+            name=skill_name,
+            defaults={'description': f'Learn {skill_name} from experienced community members'}
+        )
+        skills.append(skill)
+        if created:
+            print(f"Created skill: {skill_name}")
+    
+    # Create users
     users = create_users()
-    skills = create_skills()
-    offers, requests = create_offers_requests(users, skills)
-    accepted, completed = create_matches_transactions_reviews(users, offers, requests)
-    print(f"Seeded demo data: {len(users)} users, {len(skills)} skills, {len(offers)} offers, {len(requests)} requests, {len(accepted)} accepted matches, {len(completed)} completed matches.")
-    print("Demo login: alex_smith@example.com / demodemo (after seeding).")
+    
+    # Create offers and requests
+    offers_created, requests_created = create_offers_requests(users, skills)
+    
+    print(f"\nSeeding complete!")
+    print(f"Created {len(users)} users")
+    print(f"Created {offers_created} offers")
+    print(f"Created {requests_created} requests")
+    print(f"Demo login: alex_smith@example.com / demodemo")
 
 
