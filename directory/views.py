@@ -260,3 +260,14 @@ def request_toggle(request: HttpRequest, pk: int) -> HttpResponse:
         return render(request, 'directory/partials/_request_card.html', {'request': request_obj})
     
     return redirect('requests-list')
+
+
+# Temporary view to trigger seeding (remove after use)
+def seed_data(request: HttpRequest) -> HttpResponse:
+    """Temporary view to seed realistic data - REMOVE AFTER USE"""
+    try:
+        from scripts.seed_data import run
+        run()
+        return HttpResponse("✅ Realistic data seeded successfully! Refresh the homepage to see the changes.")
+    except Exception as e:
+        return HttpResponse(f"❌ Error seeding data: {str(e)}")
