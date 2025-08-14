@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}SkillBank - Time-based Skill Swap{% endblock %}
+{% block content %}
+<div class="text-center mb-8">
+  <h1 class="text-4xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3 animate-bounce-gentle">Welcome to SkillBank</h1>
+  <p class="text-lg text-gray-600 max-w-2xl mx-auto">Discover amazing skills from our vibrant community of experts and learners</p>
+</div>
+
+<div class="flex justify-center mb-8">
+  <a href="/offers/new/" class="group relative px-6 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 font-bold text-base flex items-center space-x-2 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <svg class="w-5 h-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+    </svg>
+    <span class="relative z-10">Create New Offer</span>
+  </a>
+</div>
+
+<div class="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/30 mb-8">
+  <div class="text-center mb-4">
+    <h2 class="text-xl font-bold text-gray-800 mb-1">Find Your Perfect Match</h2>
+    <p class="text-gray-600 text-sm">Filter by skills, location, and availability</p>
+  </div>
+  <form class="grid grid-cols-1 md:grid-cols-4 gap-3" hx-get="/" hx-target="#results" hx-push-url="true">
+    <div class="relative">
+      <select name="skill" class="w-full border-2 border-gray-200 rounded-xl p-3 bg-white/90 backdrop-blur focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-gray-700 font-medium text-sm">
+        <option value="">All skills</option>
+        {% for s in skills %}
+          <option value="{{ s.id }}" {% if filters.skill|default:'' == s.id|stringformat:'s' %}selected{% endif %}>{{ s.name }}</option>
+        {% endfor %}
+      </select>
+      <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="relative">
+      <input class="w-full border-2 border-gray-200 rounded-xl p-3 bg-white/90 backdrop-blur focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 text-sm" type="text" name="location" placeholder="Location" value="{{ filters.location }}" />
+      <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="relative">
+      <input class="w-full border-2 border-gray-200 rounded-xl p-3 bg-white/90 backdrop-blur focus:ring-4 focus:ring-pink-500/20 focus:border-pink-500 transition-all duration-300 text-sm" type="text" name="availability" placeholder="Availability" value="{{ filters.availability }}" />
+      <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+    </div>
+    <button class="px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white rounded-xl transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105 text-sm">Filter</button>
+  </form>
+</div>
+
+<div id="results" hx-swap="innerHTML" class="animate-fade-in">
+  {% include 'directory/partials/_offers_results.html' %}
+</div>
+{% endblock %}

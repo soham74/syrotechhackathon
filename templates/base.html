@@ -151,38 +151,39 @@
     </div>
 
     <nav class="sticky top-0 z-40 glass-effect border-b border-white/30 shadow-2xl">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <a href="/" class="flex items-center space-x-4 group">
-                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300 animate-bounce-gentle">
-                    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300 animate-bounce-gentle">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
                 <div>
-                    <div class="text-2xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">SkillBank</div>
-                    <div class="text-sm text-gray-600 -mt-1 font-medium">Time-based Skill Swap</div>
+                    <div class="text-xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">SkillBank</div>
+                    <div class="text-xs text-gray-600 -mt-1 font-medium">Time-based Skill Swap</div>
                 </div>
             </a>
-            <div class="flex items-center gap-3 text-sm">
-                <a class="px-5 py-3 rounded-2xl hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 transition-all duration-300 text-gray-700 hover:text-indigo-600 font-semibold" href="/offers/">Offers</a>
-                <a class="px-5 py-3 rounded-2xl hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-pink-500/10 transition-all duration-300 text-gray-700 hover:text-purple-600 font-semibold" href="/requests/">Requests</a>
-                <a class="px-5 py-3 rounded-2xl hover:bg-gradient-to-r hover:from-pink-500/10 hover:to-red-500/10 transition-all duration-300 text-gray-700 hover:text-pink-600 font-semibold" href="/matches/">Matches</a>
-                <a class="px-5 py-3 rounded-2xl hover:bg-gradient-to-r hover:from-green-500/10 hover:to-blue-500/10 transition-all duration-300 text-gray-700 hover:text-green-600 font-semibold" href="/wallet/">Wallet</a>
-                <a class="px-5 py-3 rounded-2xl hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-indigo-500/10 transition-all duration-300 text-gray-700 hover:text-blue-600 font-semibold" href="/reviews/pending">Reviews</a>
-                <a class="px-6 py-3 rounded-2xl text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 shadow-xl hover:shadow-2xl font-bold transform hover:scale-105" href="/accounts/login/">Sign In</a>
+            <div class="flex items-center gap-2 text-sm">
+                <a class="px-4 py-2 rounded-xl hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 transition-all duration-300 text-gray-700 hover:text-indigo-600 font-semibold" href="/">Home</a>
+                <a class="px-4 py-2 rounded-xl hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-pink-500/10 transition-all duration-300 text-gray-700 hover:text-purple-600 font-semibold" href="/offers/">Offers</a>
+                <a class="px-4 py-2 rounded-xl hover:bg-gradient-to-r hover:from-pink-500/10 hover:to-red-500/10 transition-all duration-300 text-gray-700 hover:text-pink-600 font-semibold" href="/requests/">Requests</a>
+                <a class="px-4 py-2 rounded-xl hover:bg-gradient-to-r hover:from-green-500/10 hover:to-blue-500/10 transition-all duration-300 text-gray-700 hover:text-green-600 font-semibold" href="/matches/">Matches</a>
+                <a class="px-4 py-2 rounded-xl hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-indigo-500/10 transition-all duration-300 text-gray-700 hover:text-blue-600 font-semibold" href="/wallet/">Wallet</a>
+                <a class="px-4 py-2 rounded-xl hover:bg-gradient-to-r hover:from-yellow-500/10 hover:to-orange-500/10 transition-all duration-300 text-gray-700 hover:text-yellow-600 font-semibold" href="/reviews/pending">Reviews</a>
+                <a class="px-5 py-2 rounded-xl text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 shadow-xl hover:shadow-2xl font-bold transform hover:scale-105" href="/accounts/login/">Sign In</a>
             </div>
         </div>
     </nav>
-    <main class="max-w-7xl mx-auto px-6 py-10 animate-fade-in relative z-10">
+    <main class="max-w-7xl mx-auto px-4 py-6 animate-fade-in relative z-10">
         {% if messages %}
-        <div class="fixed top-6 right-6 space-y-3 z-50">
+        <div class="fixed top-4 right-4 space-y-2 z-50">
             {% for message in messages %}
             {% if 'error' in message.tags %}
-            <div class="toast px-8 py-4 rounded-2xl shadow-2xl text-white bg-gradient-to-r from-red-500 to-red-600 transition-all duration-300 animate-slide-up">{{ message }}</div>
+            <div class="toast px-6 py-3 rounded-xl shadow-xl text-white bg-gradient-to-r from-red-500 to-red-600 transition-all duration-300 animate-slide-up text-sm">{{ message }}</div>
             {% elif 'success' in message.tags %}
-            <div class="toast px-8 py-4 rounded-2xl shadow-2xl text-white bg-gradient-to-r from-green-500 to-green-600 transition-all duration-300 animate-slide-up">{{ message }}</div>
+            <div class="toast px-6 py-3 rounded-xl shadow-xl text-white bg-gradient-to-r from-green-500 to-green-600 transition-all duration-300 animate-slide-up text-sm">{{ message }}</div>
             {% else %}
-            <div class="toast px-8 py-4 rounded-2xl shadow-2xl text-white bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300 animate-slide-up">{{ message }}</div>
+            <div class="toast px-6 py-3 rounded-xl shadow-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300 animate-slide-up text-sm">{{ message }}</div>
             {% endif %}
             {% endfor %}
         </div>
